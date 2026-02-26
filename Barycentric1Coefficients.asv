@@ -1,0 +1,28 @@
+function [gamma, fx] = Barycentric1Coefficients(mesh, f, precision)
+n = length(x)-1; % n+1 data points to interpolate polynomial of degree n 
+
+if precision == "Single" % Initial points as single and double point precision
+    mesh = single(mesh);
+    gamma = ones(1, n+1, 'single');
+else
+    mesh = double(mesh);
+    gamma = ones(1, n+1, 'double');
+end
+
+fx = f(mesh); % eval. function at mesh points
+
+% Code from berrut and Trefethen 
+for j = 1:n 
+    for k = 0:j-1
+        gamma(k+1) = (mesh(k+1)- mesh(j+1)) * gamma(k+1);  
+    end 
+
+    new_weight = 1; 
+    for k = 0:j-1
+        new_weight = new_weight * (x(j+1)-x(k+1));
+    end 
+    gamma(j+1) = new_weight;
+end 
+        
+gamma = 1 ./ gamma; % compute reciporical using el
+end 
